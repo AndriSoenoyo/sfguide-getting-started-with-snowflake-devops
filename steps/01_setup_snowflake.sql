@@ -1,13 +1,13 @@
 USE ROLE ACCOUNTADMIN;
 
-CREATE OR ALTER WAREHOUSE QUICKSTART_WH 
+CREATE OR ALTER WAREHOUSE DATAOPS_WH 
   WAREHOUSE_SIZE = XSMALL 
   AUTO_SUSPEND = 300 
   AUTO_RESUME= TRUE;
 
 
 -- Separate database for git repository
-CREATE OR ALTER DATABASE QUICKSTART_COMMON;
+CREATE OR ALTER DATABASE DEVOPS_COMMON;
 
 
 -- API integration is needed for GitHub integration
@@ -20,10 +20,10 @@ CREATE OR REPLACE API INTEGRATION git_api_integration
 -- Git repository object is similar to external stage
 CREATE OR REPLACE GIT REPOSITORY quickstart_common.public.quickstart_repo
   API_INTEGRATION = git_api_integration
-  ORIGIN = 'https://github.com/AndriSoenoyo/sfguide-getting-started-with-snowflake-devops'; -- INSERT URL OF FORKED REPO HERE
+  ORIGIN = 'https://github.com/AndriSoenoyo/snowflake-dataops'; -- INSERT URL OF FORKED REPO HERE
 
 
-CREATE OR ALTER DATABASE QUICKSTART_{{environment}};
+CREATE OR ALTER DATABASE YTL_{{environment}};
 
 
 -- To monitor data pipeline's completion
@@ -31,6 +31,7 @@ CREATE OR REPLACE NOTIFICATION INTEGRATION email_integration
   TYPE=EMAIL
   ENABLED=TRUE;
 
+USE DATABASE YTL_{{environment}};
 
 -- Database level objects
 CREATE OR ALTER SCHEMA bronze;
@@ -39,9 +40,40 @@ CREATE OR ALTER SCHEMA gold;
 
 
 -- Schema level objects
-CREATE OR REPLACE FILE FORMAT bronze.json_format TYPE = 'json';
+-- CREATE OR REPLACE FILE FORMAT bronze.json_format TYPE = 'json';
+CREATE OR REPLACE FILE FORMAT bronze.csv_format TYPE = 'csv', PARSE_HEADER = TRUE;
 CREATE OR ALTER STAGE bronze.raw;
 
 
 -- Copy file from GitHub to internal stage
-copy files into @bronze.raw from @quickstart_common.public.quickstart_repo/branches/main/data/airport_list.json;
+-- copy files into @bronze.raw from @quickstart_common.public.quickstart_repo/branches/main/data/airport_list.json;
+copy files into @bronze.raw from @quickstart_common.public.quickstart_repo/branches/main/data/Global_Superstore2.csv;
+
+create or alter TABLE YTL_{{environment}}.BRONZE.SUPERSTORE (
+	ROW_ID NUMBER(38,0),
+	ORDER_ID VARCHAR(16777216),
+	ORDER_DATE VARCHAR(16777216),
+	SHIP_DATE VARCHAR(16777216),
+	SHIP_MODE VARCHAR(16777216),
+	CUSTOMER_ID VARCHAR(16777216),
+	CUSTOMER_NAME VARCHAR(16777216),
+	SEGMENT VARCHAR(16777216),
+	CITY VARCHAR(16777216),
+	STATE VARCHAR(16777216),
+	COUNTRY VARCHAR(16777216),
+	POSTAL_CODE NUMBER(38,0),
+	MARKET VARCHAR(16777216),
+	REGION VARCHAR(16777216),
+	PRODUCT_ID VARCHAR(16777216),
+	CATEGORY VARCHAR(16777216),
+	SUBCATEGORY VARCHAR(16777216),
+	PRODUCT_NAME VARCHAR(16777216),
+	SALES NUMBER(38,5),
+	QUANTITY NUMBER(38,0),
+	DISCOUNT NUMBER(38,3),
+	PROFIT NUMBER(38,5),
+	SHIPPING_COST NUMBER(38,2),
+	ORDER_PRIORITY VARCHAR(16777216)
+);
+
+COPY INTO BRONZE.SUPERSTORE FROM @bronze.raw FILE_FORMAT = (TYPE = CSV SKIP_HEADER = 1 FIELD_OPTIONALLY_ENCLOSED_BY = '"');
