@@ -18,7 +18,7 @@ CREATE OR REPLACE API INTEGRATION git_api_integration
 
 
 -- Git repository object is similar to external stage
-CREATE OR REPLACE GIT REPOSITORY quickstart_common.public.quickstart_repo
+CREATE OR REPLACE GIT REPOSITORY DEVOPS_COMMON.public.repo
   API_INTEGRATION = git_api_integration
   ORIGIN = 'https://github.com/AndriSoenoyo/snowflake-dataops'; -- INSERT URL OF FORKED REPO HERE
 
