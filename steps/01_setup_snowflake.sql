@@ -7,7 +7,7 @@ CREATE OR ALTER WAREHOUSE DATAOPS_WH
 
 
 -- Separate database for git repository
-CREATE OR ALTER DATABASE DEVOPS_COMMON;
+CREATE OR ALTER DATABASE DATAOPS_COMMON;
 
 
 -- API integration is needed for GitHub integration
@@ -18,7 +18,7 @@ CREATE OR REPLACE API INTEGRATION git_api_integration
 
 
 -- Git repository object is similar to external stage
-CREATE OR REPLACE GIT REPOSITORY DEVOPS_COMMON.public.repo
+CREATE OR REPLACE GIT REPOSITORY DATAOPS_COMMON.public.repo
   API_INTEGRATION = git_api_integration
   ORIGIN = 'https://github.com/AndriSoenoyo/snowflake-dataops'; -- INSERT URL OF FORKED REPO HERE
 
@@ -47,7 +47,7 @@ CREATE OR ALTER STAGE bronze.raw;
 
 -- Copy file from GitHub to internal stage
 -- copy files into @bronze.raw from @quickstart_common.public.quickstart_repo/branches/main/data/airport_list.json;
-copy files into @bronze.raw from @quickstart_common.public.quickstart_repo/branches/main/data/Global_Superstore2.csv;
+copy files into @bronze.raw from @DATAOPS_COMMON.public.repo/branches/main/data/Global_Superstore2.csv;
 
 create or alter TABLE YTL_{{environment}}.BRONZE.SUPERSTORE (
 	ROW_ID NUMBER(38,0),
