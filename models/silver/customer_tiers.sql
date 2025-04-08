@@ -6,7 +6,7 @@ AS
 SELECT
 	TRANSFORM.Customer_ID, TRANSFORM.Customer_Name, TRANSFORM.TotalSalesPerCustomer, CASE
 			WHEN TotalSalesPerCustomer >= 15000 THEN 'Platinum'
-			WHEN TotalSalesPerCustomer >= 10000 THEN 'Gold'
+			WHEN TotalSalesPerCustomer >= 11000 THEN 'Gold'
 			WHEN TotalSalesPerCustomer >= 5000 THEN 'Silver'
 			ELSE 'Bronze'
 	END AS CustomerTier 
