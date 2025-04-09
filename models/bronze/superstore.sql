@@ -1,4 +1,4 @@
-create or alter TABLE YTL_{{environment}}.BRONZE.SUPERSTORE (
+create or replace TABLE YTL_{{environment}}.BRONZE.SUPERSTORE (
 	ROW_ID NUMBER(38,0),
 	ORDER_ID VARCHAR(16777216),
 	ORDER_DATE VARCHAR(16777216),
